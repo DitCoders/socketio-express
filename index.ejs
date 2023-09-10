@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>ChatApp</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+  <form id="form">
+   <input type="text" placeholder="Username" id="myname">
+        <input type="text" placeholder="Message" id="message">
+    <button>Send</button>
+  </form>
+  <div id="messageArea">
+    <% dataPesan.forEach((pesan)=> { %>
+      <p class="kotakp">
+        <%= pesan.username %> mengatakan <%= pesan.pesan %>
+      </p>
+      <% }); %>
+  </div>
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  let socket = io();
+
+  let form = document.getElementById('form');
+  let myname = document.getElementById('myname');
+  let message = document.getElementById('message');
+  let messageArea = document.getElementById("messageArea");
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    if (message.value) {
+      socket.emit('send data', {username: myname.value, pesan: message.value});
+      message.value = "";
+    }
+  });
+
+  socket.on("send data", (pesan) => {
+    let name = document.createElement("p");
+    name.textContent = pesan.username + " mengatakan " + pesan.pesan;
+    messageArea.appendChild(name);
+    });
+</script>
+
+</html>
